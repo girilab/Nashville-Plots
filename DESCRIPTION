@@ -1,0 +1,17 @@
+Package: nashvillePlot
+Type: Package
+Title: Draw Mirror Plots
+Version: 0.1.0
+Authors@R: 
+    person("Ayush", "Giri", email = "", role = c('aut', 'cre'))
+    person("Max", "Breyer", email = "max.a.breyer@vumc.org", role = c('aut', 'cre'))
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: nashvillePlot creates two sided gwas plots.
+License: What license is it under?
+Imports:
+  RColorBrewer (>= 1.1.2),
+  ggplot2 (>= 3.3.5),
+  ggrepel (>= 0.9.1)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
