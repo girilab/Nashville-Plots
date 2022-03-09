@@ -128,12 +128,13 @@ plot_whole_genome <- function(gwas=gwas, metaxcan=metaxcan, y_min = NULL, y_max 
   if(is.null(sig_line2_color) == TRUE) {sig_line2_color <- "black"} else {sig_line2_color <- sig_line2_color}
   p1 <- ggplot() +
     theme_bw() +
-    scale_x_continuous(breaks=xbreaks, labels=xlabels, limits=c(left, right)) + #, limits=c(left, right)) +
+    #scale_x_continuous(breaks=xbreaks, labels=xlabels, limits=c(left, right)) + #, limits=c(left, right)) +
+    scale_x_continuous(breaks=xbreaks, labels=xlabels) + 
     theme(axis.text.x=element_text(size=12, color='black'),
           axis.text.y=element_text(size=12, color='black'),
           axis.title.x=element_text(size = 12, face="bold", color="black"),
           axis.title.y=element_text(size = 12, face="bold", color="black"),
-          axis.ticks.x=element_line()) +
+ ``         axis.ticks.x=element_line()) +
     theme(panel.grid.major=element_blank(),
           panel.grid.minor=element_blank()) +
     xlab(x_axis_name) +
@@ -299,6 +300,9 @@ mirror.plot <- function(gwas=gwas, metaxcan=NULL, map_df, chr = NULL, y_min = NU
     right <- right + 2000
     gwas <- gwas[which(gwas$absolutePos >= left & gwas$absolutePos <= right), ]                   #send plotted data only
     metaxcan <- metaxcan[which(metaxcan$absolutePos >= left & metaxcan$absolutePos <= right), ]             #send plotted data only
+    #convert to relative position in a chromosome
+    gwas$absolutePos <- gwas$absolutePos - left
+    metaxcan$absolutePos <- metaxcan$absolutePos - left
 
     xbreaks <- waiver()
     xlabels <- waiver()
@@ -321,4 +325,6 @@ mirror.plot <- function(gwas=gwas, metaxcan=NULL, map_df, chr = NULL, y_min = NU
 
   p1 <- plot_whole_genome(gwas, metaxcan, y_min, y_max, y_ticks, test_ylab, x_axis_name, gene_tag_p, color_tissue, sig_line1, sig_line2, sig_line1_color, sig_line2_color, labels_cat, xbreaks, xlabels, left, right, draw_genes, draw_bottom, draw_top)
 }
+
+
 
