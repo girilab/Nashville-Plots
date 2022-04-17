@@ -55,12 +55,13 @@ metaxcan_summary <- read_metaXcan_folder(directory = metaxcan_results_location, 
 ````
 
 ## Generating plots 
-Generate a plot of the whole genome like this, the samp argument is used for purposes of speed as this may take a while to run
+Generate a plot of the whole genome like this, the samp argument is used for purposes of speed as this may take a while to run and the legend is removed for space concerns on this small page
 ````{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results=FALSE}
 p <- nashville.plot(gwas=gwas_summary, 
                     metaxcan=metaxcan_summary, 
                     map_df=map_file,
                     samp=0.2)
+p <- p + theme(legend.position = "none")
 p
 ````
 Generate a single chromosome plot like this:
@@ -70,6 +71,7 @@ p <- nashville.plot(gwas=gwas_summary,
                     map_df=map_file,
                     chr = 7,
                     samp = 0.2)
+p <- p + theme(legend.position = "none")
 p
 ````
 Generate a plot around a single gene by using the `zoom_gene` argument or the `zoom_ensg` argument:
@@ -81,5 +83,6 @@ p <- nashville.plot(gwas=gwas_summary,
                     chr = 6,
                     zoom_gene = 'GCLC',
                     samp = 0.2)
+p <- p + theme(legend.position = "none")
 p
 ````
