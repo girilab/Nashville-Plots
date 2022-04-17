@@ -1,0 +1,85 @@
+---
+title: "Nashville plots with GWAS summary statistic data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{nashGWAS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(nashvillePlot)
+source("~/Documents/work/giri/Nashville-Plots/R/nashvillePlot.R")
+```
+This document explains how to prepare the data for use with the nashvillePlot package and it's basic usage. The ?functionName command can be used in R to get the documentation of a function.
+
+The pipeline for nashvillePlot is a simple 2 step process.
+
+* Loading and formatting the input data
+* Generating Plots
+
+## Loading the data
+nashvillePlots is most effectivly used to generate two manhattan plots on the same axes with one pointed up and the other pointed down. In this example we will use summary statitics from one gwas and metaXcan results from multiple tissues as the other data set.
+
+The first data set is a single flat file organized like this:
+````
+SNP CHR BP P
+5:85928892 5 85928892 0.4193
+14:3    6082010 14 36082010 0.6898
+````
+The second data set will be a number of flat files in a single directory, each organized with the prediXcan output format:
+````
+gene,gene_name,zscore,effect_size,pvalue,var_g,pred_perf_r2,pred_perf_pval,pred_perf_qval,n_snps_used,n_snps_in_cov,n_snps_in_model
+ENSG00000000001,GENE1,-3.27030745841,-2.29584654778,0.00107430648978,0.00115464606277,0.0929513588404,0.00629507630264,0.0191335645147,3,3,3
+ENSG00000000002,GENE2,-3.19327513738,-0.289140191132,0.00140668846561,0.0650699112346,0.0991286399518,0.00471228984588,0.0154733809867,57,58,58
+````
+
+Additionally we need a mapping that provides a correspondance between ensembl id and gene position in the genome. This file is provided in the package
+
+
+````{r}
+map_file_location <- "~/Documents/work/giri/Nashville-Plots/dat/EnsemblBuild37map.txt"
+gwas_location <- "~/Documents/work/giri/Nashville-Plots/dat/gwasSumStats.txt"
+metaxcan_results_location <- "~/Documents/work/giri/Nashville-Plots/dat/"
+
+map_file <- read.table(map_file_location, header = TRUE)
+gwas_summary <- read.table(gwas_location, header= TRUE)
+metaxcan_summary <- read_metaXcan_folder(directory = metaxcan_results_location, map = map_file_location)
+````
+
+## Generating plots 
+Generate a plot of the whole genome like this, the samp argument is used for purposes of speed as this may take a while to run
+````{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results=FALSE}
+p <- nashville.plot(gwas=gwas_summary, 
+                    metaxcan=metaxcan_summary, 
+                    map_df=map_file,
+                    samp=0.2)
+p
+````
+Generate a single chromosome plot like this:
+````{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results=FALSE}
+p <- nashville.plot(gwas=gwas_summary, 
+                    metaxcan=metaxcan_summary, 
+                    map_df=map_file,
+                    chr = 7,
+                    samp = 0.2)
+p
+````
+Generate a plot around a single gene by using the `zoom_gene` argument or the `zoom_ensg` argument:
+````{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results=FALSE}
+options(error=recover)
+p <- nashville.plot(gwas=gwas_summary, 
+                    metaxcan=metaxcan_summary, 
+                    map_df=map_file,
+                    chr = 6,
+                    zoom_gene = 'GCLC',
+                    samp = 0.2)
+p
+````

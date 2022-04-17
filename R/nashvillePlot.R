@@ -1,4 +1,4 @@
-#require('ggplot2') #these are not supposed to be used for package
+require('ggplot2') #these are not supposed to be used for package
 #require('ggrepel')
 
 #' Validate Input
@@ -59,8 +59,8 @@ validate_input <- function(x, chr_name="CHR", pos_name="BP", p_val_name="P", snp
 #' @export
 read_metaXcan_folder <-  function(directory, map, label=c(), pattern='*.csv$') {
   files <- list.files(directory, pattern=pattern)
-  appended_gene_d <- data.table::fread(map, header=TRUE)
-  tissues <- data.table()
+  appended_gene_d <- read.table(map, header=TRUE)
+  tissues <- data.frame()
   if(length(label)!=0){
     stopifnot(length(label)==length(files))
   }
@@ -129,12 +129,12 @@ plot_whole_genome <- function(gwas=gwas, metaxcan=metaxcan, y_min = NULL, y_max 
   p1 <- ggplot() +
     theme_bw() +
     #scale_x_continuous(breaks=xbreaks, labels=xlabels, limits=c(left, right)) + #, limits=c(left, right)) +
-    scale_x_continuous(breaks=xbreaks, labels=xlabels) + 
+    scale_x_continuous(breaks=xbreaks, labels=xlabels) +
     theme(axis.text.x=element_text(size=12, color='black'),
           axis.text.y=element_text(size=12, color='black'),
           axis.title.x=element_text(size = 12, face="bold", color="black"),
           axis.title.y=element_text(size = 12, face="bold", color="black"),
- ``         axis.ticks.x=element_line()) +
+          axis.ticks.x=element_line()) +
     theme(panel.grid.major=element_blank(),
           panel.grid.minor=element_blank()) +
     xlab(x_axis_name) +
@@ -153,7 +153,7 @@ plot_whole_genome <- function(gwas=gwas, metaxcan=metaxcan, y_min = NULL, y_max 
                                    values = c("darkgray", "black", color_tissue),
                                    labels = c("Single SNP", "Single SNP", labels_cat)) +
     guides(shape = "none", size = "none", colour = guide_legend(reverse = TRUE, override.aes = list(size=6))) +
-    geom_label_repel(data = for_tag, aes(x = absolutePos, y = log_p, label = Gene)) +
+    ggrepel::geom_label_repel(data = for_tag, aes(x = absolutePos, y = log_p, label = Gene)) +
     geom_hline(yintercept = sig_line1, color = c(sig_line1_color), size = 1) +
     geom_hline(yintercept = sig_line2, color = c(sig_line2_color), size = 1)
   }
@@ -183,8 +183,8 @@ plot_whole_genome <- function(gwas=gwas, metaxcan=metaxcan, y_min = NULL, y_max 
 #' @param gene_name name of a gene
 #' @param map_df data frame mapping gene names to ensembl ID.
 get_gene_bounds <- function(gene_name, map_df) {
-  lower <- unique(map_df[which(map_df$Gene==gene_name), START_POS])
-  upper <- unique(map_df[which(map_df$Gene==gene_name), END_POS])
+  lower <- unique(map_df[which(map_df$Gene==gene_name), "START_POS"])
+  upper <- unique(map_df[which(map_df$Gene==gene_name), "END_POS"])
   if (length(lower) > 1) { stop(paste0("Multiple genes with name: ", gene_name, " Try giving an ENSG."))}
   lower <- lower - (upper - lower)* 0.05
   upper <- upper + (upper - lower)* 0.05
@@ -198,8 +198,8 @@ get_gene_bounds <- function(gene_name, map_df) {
 #' @param ensg ensembl ID
 #' @param map_df data frame mapping gene names to ensembl ID.
 get_gene_bounds_ensg <- function(ensg, map_df) {
-  lower <- unique(map_df[which(map_df$ENSG==ensg), START_POS])
-  upper <- unique(map_df[which(map_df$ENSG==ensg), END_POS])
+  lower <- unique(map_df[which(map_df$ENSG==ensg), "START_POS"])
+  upper <- unique(map_df[which(map_df$ENSG==ensg), "END_POS"])
   if (length(lower) > 1) { stop(paste0("Multiple genes with name: ", ensg, " Try giving a gene name"))}
   lower <- lower - (upper - lower) * 0.05
   upper <- upper + (upper - lower) * 0.05
@@ -207,7 +207,7 @@ get_gene_bounds_ensg <- function(ensg, map_df) {
 }
 
 
-#' Create a Mirror Plot
+#' Create a Nashville Plot
 #'
 #' This function makes two plots of GWAS summary data which share the same
 #' x-axis, one pointed up and the other pointed down.
@@ -238,11 +238,10 @@ get_gene_bounds_ensg <- function(ensg, map_df) {
 #' @param zoom_right plot genes within a gene before this base pair
 #' @param sample draw what percent of points with P-value greater than 0.1
 #' @export
-mirror.plot <- function(gwas=gwas, metaxcan=NULL, map_df, chr = NULL, y_min = NULL, y_max = NULL, y_ticks = NULL, zoom_left = 0,
+nashville.plot <- function(gwas=gwas, metaxcan=NULL, map_df, chr = NULL, y_min = NULL, y_max = NULL, y_ticks = NULL, zoom_left = 0,
                         zoom_right = 0, zoom_gene = NULL, zoom_ensg = NULL, gene_tag_p = NULL, color_tissue = NULL, sig_line1 = NULL, sig_line2 = NULL,
                         sig_line1_color = NULL, sig_line2_color = NULL, draw_bottom = TRUE, draw_top = TRUE, samp = NULL)
 {
-
   labels_cat <- c(sort(unique(as.character(metaxcan$dtype))))
   test_ylab <- expression(log["10"]*italic((p))~"&"~-log["10"]*italic((p)))
   gwas <- validate_input(gwas, chr_name = "CHR", pos_name = "BP", p_val_name = "P", snp_name = "SNP")
@@ -268,24 +267,24 @@ mirror.plot <- function(gwas=gwas, metaxcan=NULL, map_df, chr = NULL, y_min = NU
   right <- NA
   draw_genes <- F
   if(!is.null(chr)) {
-    cat('Chromosome specific plot\n')
+    message('Chromosome specific plot\n')
     x_axis_name <- paste0("Chromosome ",  chr, " (MB)")
     if (!is.null(zoom_gene)) {
-      cat('Zoom to gene by name\n')
+      message('Zoom to gene by name\n')
       bounds <- get_gene_bounds(zoom_gene, map_df)
       left <- chr_shift[chr] + bounds[1]
       right <- chr_shift[chr] + bounds[2]
       draw_genes <- T
     }
     else if (!is.null(zoom_ensg)) {
-      cat('zoom to gene by ENSG\n')
+      message('zoom to gene by ENSG\n')
       bounds <- get_gene_bounds_ensg(zoom_ensg, map_df)
       left <- chr_shift[chr] + bounds[1]
       right <- chr_shift[chr] + bounds[2]
       draw_genes <- T
     }
     else if ( zoom_left !=0 | zoom_right !=0) {
-      cat('Manual zoom\n')
+      message('Manual zoom\n')
       left <- chr_shift[chr] + zoom_left
       right <- chr_shift[chr] + zoom_right
       draw_genes <- T
@@ -295,9 +294,11 @@ mirror.plot <- function(gwas=gwas, metaxcan=NULL, map_df, chr = NULL, y_min = NU
         right <- chr_shift[chr+1]
       }
     }
+
     #pad by 2 kilobase
     left <- left - 2000
     right <- right + 2000
+
     gwas <- gwas[which(gwas$absolutePos >= left & gwas$absolutePos <= right), ]                   #send plotted data only
     metaxcan <- metaxcan[which(metaxcan$absolutePos >= left & metaxcan$absolutePos <= right), ]             #send plotted data only
     #convert to relative position in a chromosome
@@ -307,7 +308,7 @@ mirror.plot <- function(gwas=gwas, metaxcan=NULL, map_df, chr = NULL, y_min = NU
     xbreaks <- waiver()
     xlabels <- waiver()
     } else {
-    cat('Whole genome plot\n')
+    message('Whole genome plot\n')
     x_axis_name <- "Chromosome"
     xbreaks <- (chr_shift + (max_pos - min_pos)/2) * 1e-6                                 #megabase
     xlabels <- unique(gwas$CHR)
