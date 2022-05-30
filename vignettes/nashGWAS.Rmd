@@ -1,8 +1,8 @@
 ---
 title: "Nashville plots with GWAS summary statistic data"
 output: rmarkdown::html_vignette
-fig_width: 8
-fig_height: 8
+fig_width: 16
+fig_height: 16
 vignette: >
   %\VignetteIndexEntry{nashGWAS}
   %\VignetteEngine{knitr::rmarkdown}
@@ -17,8 +17,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, echo=FALSE}
-#library(nashvillePlot)
-source("~/Documents/work/giri/Nashville-Plots/R/nashvillePlot.R")
+library(ggplot2)
+library(nashvillePlot)
+#source("~/Documents/work/giri/Nashville-Plots/R/nashvillePlot.R")
 ```
 
 This document explains how to prepare the data for use with the nashvillePlot package and it's basic usage. The ?functionName command can be used in R to get the documentation of a function.
@@ -46,14 +47,14 @@ The second data set will be a number of flat files in a single directory, each o
 
 Additionally we need a mapping that provides a correspondance between ensembl id and gene position in the genome. This file is provided in the package
 
-```{r}
-map_file_location <- "~/Documents/work/giri/Nashville-Plots/dat/EnsemblBuild37map.txt"
+```{r, eval=TRUE}
 gwas_location <- "~/Documents/work/giri/Nashville-Plots/dat/gwasSumStats.txt"
 metaxcan_results_location <- "~/Documents/work/giri/Nashville-Plots/dat/"
+tissue_label <- data.frame(V1 = c("AdiposeSubcutaneous.csv", "CellsTransformedFibroblasts.csv"),
+                           V2 = c("AdiposeSubcutaneous", "CellsTransformedFirbroblasts"))
 
-map_file <- read.table(map_file_location, header = TRUE)
 gwas <- read.table(gwas_location, header= TRUE)
-meta <- read_metaXcan_folder(directory = metaxcan_results_location, map = map_file_location)
+meta <- read_metaXcan_folder(directory = metaxcan_results_location, label = tissue_label)
 
 
 gwas.obj <- make.valid.object(CHR = gwas$CHR,
@@ -73,82 +74,94 @@ meta.obj <- make.valid.object(CHR = as.numeric(meta$CHR),
 
 Generate a plot of the whole genome like this, the samp argument is used for purposes of speed as this may take a while to run and the legend is removed for space concerns on this small page
 
-```{r, message=FALSE}
+```{r, message=FALSE, eval=TRUE}
 
-mygraph <- nashville.plot(map_file,
-                          data1 = gwas.obj,
+mygraph <- nashville.plot(data1 = gwas.obj,
                           data2 = meta.obj,
                           data1_direction = 1)
+mygraph <- mygraph + theme(legend.position = "none")
+#mygraph
+```
 
+```{r, echo=FALSE}
+knitr::include_graphics("/Users/breyer/Desktop/whole_genome.tiff")
+```
+
+Or this:
+
+```{r, message=FALSE, eval=TRUE}
+
+mygraph <- nashville.plot(data1 = gwas.obj,
+                          data2 = meta.obj,
+                          data1_direction = -1)
 mygraph <- mygraph + theme(legend.position = "none")
 mygraph
 ```
 
-Or this:
-
-```{r, message=FALSE}
-
-mygraph <- nashville.plot(map_file,
-                          data1 = gwas.obj,
-                          data2 = meta.obj,
-                          data1_direction = -1,
-                          sig_line1 = 5e-8,
-                          sig_line1_color = 'coral',
-                          gene_tag_1 = 5e-8)
-
-mygraph
+```{r, echo=FALSE}
+knitr::include_graphics("/Users/breyer/Desktop/whole_genome2.tiff")
 ```
 
 Generate a single chromosome plot like this:
 
-```{r, message=FALSE}
-mygraph <- nashville.plot(map_file,
-                          data1 = gwas.obj,
+```{r, message=FALSE, eval=TRUE}
+mygraph <- nashville.plot(data1 = gwas.obj,
                           data2 = meta.obj,
                           chr = 7)
-
+mygraph <- mygraph + theme(legend.position = "none")
 mygraph
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("/Users/breyer/Desktop/chr7.tiff")
 ```
 
 or this:
 
-```{r, message=FALSE}
-mygraph <- nashville.plot(map_file,
-                          data1 = gwas.obj,
+```{r, message=FALSE,eval=TRUE}
+mygraph <- nashville.plot(data1 = gwas.obj,
                           data1_direction = -1,
-                          chr = 7)
-
+                          chr = 13)
+mygraph <- mygraph + theme(legend.position = "none")
 mygraph
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("/Users/breyer/Desktop/chr13.tiff")
 ```
 
 Generate a plot around a single gene by using the `zoom_gene` argument or the `zoom_ensg` argument:
 
-```{r, message=FALSE}
-options(error=recover)
-
-mygraph <- nashville.plot(map_file,
-                          data1 = gwas.obj,
+```{r, message=FALSE, eval=TRUE}
+mygraph <- nashville.plot(data1 = gwas.obj,
                           data2 = meta.obj,
                           chr = 6,
                           zoom_gene = 'GCLC',
                           draw_genes = TRUE)
-
+mygraph <- mygraph + theme(legend.position = "none")
 mygraph
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("/Users/breyer/Desktop/GCLC_lines.tiff")
 ```
 
 Or this:
 
-```{r, message=FALSE}
+```{r, message=FALSE, eval=TRUE}
 options(error=recover)
 
-mygraph <- nashville.plot(map_file,
-                          data1 = gwas.obj,
+mygraph <- nashville.plot(data1 = gwas.obj,
                           data2 = meta.obj,
                           chr = 6,
                           data1_direction = -1,
                           zoom_left = 0,
                           zoom_right = 5e6,
                           draw_genes = TRUE)
-
+mygraph <- mygraph + theme(legend.position = "none")
 mygraph
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("/Users/breyer/Desktop/zoom_manual.pdf")
 ```
