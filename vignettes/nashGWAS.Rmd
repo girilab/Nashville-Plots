@@ -17,9 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, echo=FALSE}
-library(ggplot2)
+#library(ggplot2)
 library(nashvillePlot)
-#source("~/Documents/work/giri/Nashville-Plots/R/nashvillePlot.R")
 ```
 
 This document explains how to prepare the data for use with the nashvillePlot package and it's basic usage. The ?functionName command can be used in R to get the documentation of a function.
@@ -45,29 +44,14 @@ The second data set will be a number of flat files in a single directory, each o
     ENSG00000000001,GENE1,-3.27030745841,-2.29584654778,0.00107430648978,0.00115464606277,0.0929513588404,0.00629507630264,0.0191335645147,3,3,3
     ENSG00000000002,GENE2,-3.19327513738,-0.289140191132,0.00140668846561,0.0650699112346,0.0991286399518,0.00471228984588,0.0154733809867,57,58,58
 
-Additionally we need a mapping that provides a correspondance between ensembl id and gene position in the genome. This file is provided in the package
+Additionally we need a mapping that provides a correspondence between ensembl id and gene position in the genome. This file is provided in the package
 
 ```{r, eval=TRUE}
-gwas_location <- "~/Documents/work/giri/Nashville-Plots/dat/gwasSumStats.txt"
-metaxcan_results_location <- "~/Documents/work/giri/Nashville-Plots/dat/"
-tissue_label <- data.frame(V1 = c("AdiposeSubcutaneous.csv", "CellsTransformedFibroblasts.csv"),
-                           V2 = c("AdiposeSubcutaneous", "CellsTransformedFirbroblasts"))
-
-gwas <- read.table(gwas_location, header= TRUE)
-meta <- read_metaXcan_folder(directory = metaxcan_results_location, label = tissue_label)
-
-
-gwas.obj <- make.valid.object(CHR = gwas$CHR,
-                              P = gwas$P,
-                              BP = as.numeric(gwas$BP))
-
-meta.obj <- make.valid.object(CHR = as.numeric(meta$CHR),
-                              P = meta$pvalue,
-                              gene.start = meta$START_POS,
-                              gene.end = meta$END_POS,
-                              group = meta$dtype,
-                              gene.name = meta$Gene)
-
+#[1] "/Users/breyer/Documents/work/giri/Nashville-Plots/dat/"
+#metaxcan_results_location <- 
+meta.obj <- read_metaXcan_folder(paste0(getwd(), '/../dat/'))
+#gwas <- read_gwas_file(file = paste0(getwd(), '/../dat/gwasSumStats.txt')
+gwas.obj <- read_gwas_file(file = paste0(getwd(), '/../dat/test.gwas.txt'))
 ```
 
 ## Generating plots
@@ -75,12 +59,12 @@ meta.obj <- make.valid.object(CHR = as.numeric(meta$CHR),
 Generate a plot of the whole genome like this, the samp argument is used for purposes of speed as this may take a while to run and the legend is removed for space concerns on this small page
 
 ```{r, message=FALSE, eval=TRUE}
-
+options(error=recover)
 mygraph <- nashville.plot(data1 = gwas.obj,
                           data2 = meta.obj,
                           data1_direction = 1)
-mygraph <- mygraph + theme(legend.position = "none")
-#mygraph
+#mygraph <- mygraph + theme(legend.position = "none")
+mygraph
 ```
 
 ```{r, echo=FALSE}
@@ -89,7 +73,7 @@ knitr::include_graphics("/Users/breyer/Desktop/whole_genome.tiff")
 
 Or this:
 
-```{r, message=FALSE, eval=TRUE}
+```{r, message=TR, eval=TRUE}
 
 mygraph <- nashville.plot(data1 = gwas.obj,
                           data2 = meta.obj,

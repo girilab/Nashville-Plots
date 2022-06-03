@@ -47,7 +47,6 @@ get_gene_bounds_ensg <- function(ensg, map_df) {
 #' @param file path to gwas results as obtained from plink --assoc
 read_gwas_file <- function(file) {
   gwas <- read.table(file, header=T)
-  #gwas$g <- ifelse(gwas$CHR %% 2 == 0, "Single SNP", "Single SNP\u200b")
   gwas.obj <- make.valid.object(CHR = gwas$CHR, P = gwas$P, BP = as.numeric(gwas$BP), group=file)
 }
 
@@ -89,39 +88,6 @@ read_metaXcan_folder <-  function(directory, map_df = '37', pattern='*.csv$') {
                                 gene.name = appended_gene_d$Gene)
   meta.obj
 }
-
-# read_metaXcan_folder <-  function(directory, map_df = '37', label=NULL, pattern='*.csv$') {
-#   if (map_df == "37") {
-#     appended_gene_d <- gene.build.37
-#   } else if (map_df == "38") {
-#     appended_gene_d <- gene.build.38
-#   } else {
-#     stop("map_df must be '37' or  '38'")
-#   }
-#   files <- list.files(directory, pattern=pattern)
-#   #if (is.null(label)) {
-#   #  label <- data.frame(V1 = files, V2 = files)
-#   #} else {
-#   #  label <- merge(data.frame(V1 = files), label, all.x = TRUE, by = 'V1')
-#   #  label$V2 <- ifelse(is.na(label$V2), label$V1, label$V2)
-#   #}
-#   tissues <- data.frame()
-#   for (i in 1:length(files)){
-#     tissue_file <- read.csv(file=as.character(paste0(directory, label[i,1])), header = TRUE)
-#     tissue_file$dtype <- label[i, 2]
-#     tissues <- rbind(tissues, tissue_file)
-#   }
-#   appended_gene_d <- merge(tissues, appended_gene_d, by.x = "gene", by.y = "ENSG")
-#   names(appended_gene_d)[names(appended_gene_d) == "gene"] <- "ENSG"
-#   # TODO: test functionality
-#   t1 <- which(duplicated(appended_gene_d$ENSG))
-#   if(length(t1) == 0) {appended_gene_d <- appended_gene_d} else {appended_gene_d <- appended_gene_d[-c(t1), ]}
-#   #appended_gene_d$log_p <- -log10(appended_gene_d$pvalue)
-#   appended_gene_d
-# }
-
-
-
 
 #' Builds an object ready to plot
 #'
@@ -174,11 +140,6 @@ plot.mh <- function(data, direction, draw_genes) {
                                      color=color,#color=as.factor(group),
                                      group=interaction(gene.name, group)))
   }
-  #else if ((any(data$group == "Single SNP") | any(data$group == "Single \u200bSNP")) & length(table(data$group)) <= 2) {
-  #  mh <- geom_point(data=data, aes(x=absolute,
-  #                                  y=direction * log(P, 10),
-  #                                  color=ifelse(CHR %% 2 ==0, 'black', 'darkgrey')))
-  #}
   else {
     mh <- geom_point(data=data, aes(x=absolute,
                                     y=direction * log(P, 10),
@@ -210,7 +171,7 @@ nashville.plot <- function(data1, data2 = NULL, data1_direction = 1, map_df = "3
                            chr=NULL, zoom_ensg=NULL, zoom_gene=NULL, zoom_left = 0, zoom_right = Inf,
                            draw_genes = FALSE, labels_cat=NULL, group_color=NULL, sig_line1 = NULL,
                            sig_line2 = NULL, sig_line1_color = 'black', sig_line2_color = 'black',
-                           gene_tag_1 = -Inf, gene_tag_2 = -Inf, config = NULL, ...) {
+                           gene_tag_1 = -Inf, gene_tag_2 = -Inf, config = data.frame(V1=NA,V2=NA,V3=NA), ...) {
   if (data1_direction == 1) {
     data2_direction = -1
   } else {
