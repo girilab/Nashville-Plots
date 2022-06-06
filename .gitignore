@@ -4,3 +4,5 @@
 .Ruserdata
 inst/doc
 dat
+.Rbuildignore
+.DS_Store

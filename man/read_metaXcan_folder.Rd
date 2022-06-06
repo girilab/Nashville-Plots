@@ -2,27 +2,19 @@
 % Please edit documentation in R/nashvillePlot.R
 \name{read_metaXcan_folder}
 \alias{read_metaXcan_folder}
-\title{Generate  X axis}
+\title{Read MetaXcan Folder}
 \usage{
-read_metaXcan_folder(directory, map, label = c(), pattern = "*.csv$")
+read_metaXcan_folder(directory, map_df = "37", pattern = "*.csv$")
 }
 \arguments{
 \item{directory}{a string representation of a file path containing predixcan output}
 
-\item{map}{a file path containing a mapping gene names to ensembl ID. The header should be "Gene ENSG CHR START_POS END_POS"}
-
-\item{label}{a list of labels to use instead of file names for graphing. These should probably be in alphabetical order.}
+\item{map_df}{a file path containing a mapping gene names to ensembl ID. The header should be "Gene ENSG CHR START_POS END_POS"}
 
 \item{pattern}{a regex describing files to be read from "directory"}
 
-\item{x}{data frame of SNPs}
-
-\item{Read}{MetaXcan Folder
-
-This function reads in metaXcan or prediXcan results files by tissue}
+\item{label}{a list of labels to use instead of file names for graphing. These should probably be in alphabetical order.}
 }
 \description{
-This function creates an absolute order of all SNPs across all chromosomes
-and optionally trims the number of points that will be graphed by removing
-points that are unlikely to be visible.
+This function reads in metaXcan or prediXcan results files by tissue
 }
