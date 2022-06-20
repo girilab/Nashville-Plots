@@ -54,13 +54,14 @@ read_gwas_file <- function(file) {
 
 #' Read MetaXcan Folder
 #'
-#' This function reads in metaXcan or prediXcan results files by tissue
-#' @param directory a string representation of a file path containing predixcan output
-#' @param map_df a file path containing a mapping gene names to ensembl ID. The header should be "Gene ENSG CHR START_POS END_POS"
+#' This function reads in MetaXcan or PrediXcan results files by tissue
+#' @param directory a string representation of a file path containing PrediXcan output
+#' @param map_df a file path containing a mapping gene names to Ensembl ID. The header should be "Gene ENSG CHR START_POS END_POS"
 #' @param label a list of labels to use instead of file names for graphing. These should probably be in alphabetical order.
 #' @param pattern a regex describing files to be read from "directory"
+#' @param samp a number between 0 and 1 describing what percecnt of entries with p-value > 0.1 to keep
 #' @export
-read_metaXcan_folder <-  function(directory, map_df = '37', pattern='*.csv$') {
+read_metaXcan_folder <-  function(directory, map_df = '37', pattern='*.csv$', samp = NULL) {
   if (map_df == "37") {
     appended_gene_d <- gene.build.37
   } else if (map_df == "38") {
@@ -77,9 +78,15 @@ read_metaXcan_folder <-  function(directory, map_df = '37', pattern='*.csv$') {
   }
   appended_gene_d <- merge(tissues, appended_gene_d, by.x = "gene", by.y = "ENSG")
   names(appended_gene_d)[names(appended_gene_d) == "gene"] <- "ENSG"
-  # TODO: test functionality
   t1 <- which(duplicated(appended_gene_d$ENSG))
   if(length(t1) == 0) {appended_gene_d <- appended_gene_d} else {appended_gene_d <- appended_gene_d[-c(t1), ]}
+
+  if(!is.null(samp)) {
+    greater <- appended_gene_d[sample(which(appended_gene_d$pvalue>0.1), round(samp*length(which(appended_gene_d$pvalue>0.1)))), ]
+    lesser <- appended_gene_d[which(appended_gene_d$pvalue<=0.1), ]
+    appended_gene_d <- rbind(lesser, greater)
+  }
+
   #appended_gene_d$log_p <- -log10(appended_gene_d$pvalue)
   appended_gene_d$CHR <- as.numeric(appended_gene_d$CHR)
   meta.obj <- make.valid.object(CHR = appended_gene_d$CHR,
@@ -169,7 +176,8 @@ plot.mh <- function(data, direction, draw_genes) {
 #' @param sig_line2_color color for sig_line2
 #' @param draw_genes draw lines along the length of each gene instead of a dot at the midpoint
 #' @param data1_direction direction for data1 to be drawn, 1 is up and -1 is down
-#' @importFrom ggplot2 ggplot aes theme_bw guides geom_label_repel geom_hline guide_legend scale_x_continuous scale_y_continuous scale_colour_manual theme element_text element_line element_blank xlab ylab expand_limits geom_hline geom_point
+#' @importFrom ggplot2 ggplot aes theme_bw guides geom_hline guide_legend scale_x_continuous scale_y_continuous scale_colour_manual theme element_text element_line element_blank xlab ylab expand_limits geom_hline geom_point
+#' @importFrom ggrepel geom_label_repel
 #' @export
 nashville.plot <- function(data1, data2 = NULL, data1_direction = 1, map_df = "37",
                            chr=NULL, zoom_ensg=NULL, zoom_gene=NULL, zoom_left = 0, zoom_right = Inf,

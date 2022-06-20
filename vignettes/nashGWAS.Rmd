@@ -51,7 +51,7 @@ Additionally we need a mapping that provides a correspondence between ensembl id
 #metaxcan_results_location <- 
 meta.obj <- read_metaXcan_folder(paste0(getwd(), '/../dat/'))
 #gwas <- read_gwas_file(file = paste0(getwd(), '/../dat/gwasSumStats.txt')
-gwas.obj <- read_gwas_file(file = paste0(getwd(), '/../dat/test.gwas.txt'))
+gwas.obj <- read_gwas_file(file = paste0(getwd(), '/../dat/gwasSumStats.txt'))
 ```
 
 ## Generating plots
@@ -59,11 +59,11 @@ gwas.obj <- read_gwas_file(file = paste0(getwd(), '/../dat/test.gwas.txt'))
 Generate a plot of the whole genome like this, the samp argument is used for purposes of speed as this may take a while to run and the legend is removed for space concerns on this small page
 
 ```{r, message=FALSE, eval=TRUE}
-options(error=recover)
+Íoptions(error=recover)
 mygraph <- nashville.plot(data1 = gwas.obj,
                           data2 = meta.obj,
                           data1_direction = 1)
-#mygraph <- mygraph + theme(legend.position = "none")
+mygraph <- mygraph + theme(legend.position = "none")
 mygraph
 ```
 
@@ -135,14 +135,7 @@ Or this:
 ```{r, message=FALSE, eval=TRUE}
 options(error=recover)
 
-mygraph <- nashville.plot(data1 = gwas.obj,
-                          data2 = meta.obj,
-                          chr = 6,
-                          data1_direction = -1,
-                          zoom_left = 0,
-                          zoom_right = 5e6,
-                          draw_genes = TRUE)
-mygraph <- mygraph + theme(legend.position = "none")
+Ímygraph <- mygraph + theme(legend.position = "none")
 mygraph
 ```
 

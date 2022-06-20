@@ -4,17 +4,19 @@
 \alias{read_metaXcan_folder}
 \title{Read MetaXcan Folder}
 \usage{
-read_metaXcan_folder(directory, map_df = "37", pattern = "*.csv$")
+read_metaXcan_folder(directory, map_df = "37", pattern = "*.csv$", samp = NULL)
 }
 \arguments{
-\item{directory}{a string representation of a file path containing predixcan output}
+\item{directory}{a string representation of a file path containing PrediXcan output}
 
-\item{map_df}{a file path containing a mapping gene names to ensembl ID. The header should be "Gene ENSG CHR START_POS END_POS"}
+\item{map_df}{a file path containing a mapping gene names to Ensembl ID. The header should be "Gene ENSG CHR START_POS END_POS"}
 
 \item{pattern}{a regex describing files to be read from "directory"}
+
+\item{samp}{a number between 0 and 1 describing what percecnt of entries with p-value > 0.1 to keep}
 
 \item{label}{a list of labels to use instead of file names for graphing. These should probably be in alphabetical order.}
 }
 \description{
-This function reads in metaXcan or prediXcan results files by tissue
+This function reads in MetaXcan or PrediXcan results files by tissue
 }
