@@ -46,9 +46,15 @@ get_gene_bounds_ensg <- function(ensg, map_df) {
 #' Read GWAS File
 #'
 #' @param file path to gwas results as obtained from plink --assoc
+#' @param samp a number between 0 and 1 describing what percent of entries with p-value > 0.1 to randomly keep for plotting
 #' @export
-read_gwas_file <- function(file) {
+read_gwas_file <- function(file, samp = NULL) {
   gwas <- read.table(file, header=T)
+  if(!is.null(samp)) {
+    greater <- gwas[sample(which(gwas$pvalue>0.1), round(samp*length(which(gwas$pvalue>0.1)))), ]
+    lesser <- gwas[which(gwas$pvalue<=0.1), ]
+    gwas <- rbind(lesser, greater)
+  }
   gwas.obj <- make.valid.object(CHR = gwas$CHR, P = gwas$P, BP = as.numeric(gwas$BP), group=file)
 }
 
@@ -59,7 +65,7 @@ read_gwas_file <- function(file) {
 #' @param map_df a file path containing a mapping gene names to Ensembl ID. The header should be "Gene ENSG CHR START_POS END_POS"
 #' @param label a list of labels to use instead of file names for graphing. These should probably be in alphabetical order.
 #' @param pattern a regex describing files to be read from "directory"
-#' @param samp a number between 0 and 1 describing what percecnt of entries with p-value > 0.1 to keep
+#' @param samp a number between 0 and 1 describing what percent of entries with p-value > 0.1 to randomly keep for plotting
 #' @export
 read_metaXcan_folder <-  function(directory, map_df = '37', pattern='*.csv$', samp = NULL) {
   if (map_df == "37") {
