@@ -96,7 +96,10 @@ get_gene_bounds_ensg <- function(ensg, map_df, chr = NULL) {
 #' @param chr column of chromosome of SNP location, numeric
 #' @param p column of p-values of SNP, numeric
 #' @param bp column of base pair of SNP location, numeric
-#' @param id column SNP names
+#' @param snp.name column of SNP names
+#' @param config data frame of plot configuration
+#' @param color color for points from this file
+#' @param shape shape for points from this file
 #' @importFrom data.table fread
 #' @export
 read_gwas_file <- function(file, config=data.frame(V1=NA,V2=NA,V3=NA), samp = NULL, chr = "CHR", p = "P", bp = "BP", snp.name = NA, color=NA, shape=NA) {
