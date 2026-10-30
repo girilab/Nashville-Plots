@@ -25,8 +25,8 @@ This document explains how to prepare the data for use with the nashvillePlot pa
 
 The pipeline for nashvillePlot is a simple 2 step process.
 
--   Loading and formatting the input data
--   Generating Plots
+- Loading and formatting the input data
+- Generating Plots
 
 ## Loading the data
 
@@ -34,15 +34,19 @@ nashvillePlots is most effectivly used to generate two manhattan plots on the sa
 
 The first data set is a single flat file organized like this:
 
-    SNP CHR BP P
-    5:85928892 5 85928892 0.4193
-    14:3    6082010 14 36082010 0.6898
+```         
+SNP CHR BP P
+5:85928892 5 85928892 0.4193
+14:3    6082010 14 36082010 0.6898
+```
 
 The second data set will be a number of flat files in a single directory, each organized with the prediXcan output format:
 
-    gene,gene_name,zscore,effect_size,pvalue,var_g,pred_perf_r2,pred_perf_pval,pred_perf_qval,n_snps_used,n_snps_in_cov,n_snps_in_model
-    ENSG00000000001,GENE1,-3.27030745841,-2.29584654778,0.00107430648978,0.00115464606277,0.0929513588404,0.00629507630264,0.0191335645147,3,3,3
-    ENSG00000000002,GENE2,-3.19327513738,-0.289140191132,0.00140668846561,0.0650699112346,0.0991286399518,0.00471228984588,0.0154733809867,57,58,58
+```         
+gene,gene_name,zscore,effect_size,pvalue,var_g,pred_perf_r2,pred_perf_pval,pred_perf_qval,n_snps_used,n_snps_in_cov,n_snps_in_model
+ENSG00000000001,GENE1,-3.27030745841,-2.29584654778,0.00107430648978,0.00115464606277,0.0929513588404,0.00629507630264,0.0191335645147,3,3,3
+ENSG00000000002,GENE2,-3.19327513738,-0.289140191132,0.00140668846561,0.0650699112346,0.0991286399518,0.00471228984588,0.0154733809867,57,58,58
+```
 
 Additionally we need a mapping that provides a correspondence between ensembl id and gene position in the genome. This file is provided in the package
 

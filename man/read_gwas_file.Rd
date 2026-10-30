@@ -4,10 +4,12 @@
 \alias{read_gwas_file}
 \title{Read GWAS File}
 \usage{
-read_gwas_file(file)
+read_gwas_file(file, samp = NULL)
 }
 \arguments{
 \item{file}{path to gwas results as obtained from plink --assoc}
+
+\item{samp}{a number between 0 and 1 describing what percecnt of entries with p-value > 0.1 to keep}
 }
 \description{
 Read GWAS File
