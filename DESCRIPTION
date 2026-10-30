@@ -1,7 +1,7 @@
 Package: nashvillePlot
 Type: Package
 Title: Draw Mirror Plots
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: 
     person("Ayush", "Giri", email = "girilabepidemiology@gmail.com", role = c('aut', 'cre'))
     person("Max", "Breyer", email = "breyerm@me.com", role = c('aut', 'cre'))
